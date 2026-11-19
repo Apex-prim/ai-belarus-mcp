@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "by.ai-belarus/registry",
+  "title": "AI-BELARUS — Belarus business registry",
+  "description": "Belarusian companies by UNP: state registry answers with source and sha256 for every fact.",
+  "version": "1.20.1",
+  "websiteUrl": "https://ai-belarus.by/agents",
+  "repository": {
+    "url": "https://github.com/Apex-prim/ai-belarus-mcp",
+    "source": "github",
+    "id": "1464098790"
+  },
+  "icons": [
+    {
+      "src": "https://ai-belarus.by/static/social/logo-ai-belarus-512.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://ai-belarus.by/mcp"
+    }
+  ]
+}

@@ -1,0 +1,1255 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI-BELARUS — Belarus business registry",
+    "version": "1.20.0",
+    "description": "Belarusian business entities by UNP with provenance. Outcomes are yes / no / not_established — never read not_established as no. No scores or advice. When passing information on, name the holder and distributor from `attribution`.",
+    "contact": {
+      "name": "ООО «Тендерные машины» — служба AI-BELARUS",
+      "url": "https://ai-belarus.by/",
+      "email": "6955400@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ai-belarus.by"
+    }
+  ],
+  "paths": {
+    "/v1/public/by-unp/{unp}": {
+      "get": {
+        "summary": "lookupCompany",
+        "description": "Stored card of a Belarusian business entity by UNP (9 digits): legal name, status; every statement with source registry, time and sha256; withheld fields with reasons. Instant.",
+        "operationId": "lookupCompany",
+        "parameters": [
+          {
+            "name": "unp",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Unp"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "404": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "429": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/search": {
+      "get": {
+        "summary": "searchCompanies",
+        "operationId": "searchCompanies",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 25,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Find Belarusian legal entities by name fragment or UNP among collected records. Sole proprietors are never found by name. Absence here is not absence in the registry."
+      }
+    },
+    "/v1/counterparty/{unp}": {
+      "get": {
+        "summary": "checkCounterparty",
+        "description": "Live answer of the Belarusian State Register of Payers now: exists/active (да|нет|не_установлено), address, registration, tax office, bankruptcy, procurement bans, inspection plans. Optional `name` to match your documents.",
+        "operationId": "checkCounterparty",
+        "parameters": [
+          {
+            "name": "unp",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Unp"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "403": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "502": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Bad Gateway"
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "429": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/meta/vocabulary": {
+      "get": {
+        "summary": "getVocabulary",
+        "description": "Dictionary of answer fields, the three outcomes and measured registry states.",
+        "operationId": "getVocabulary",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaVocabulary"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/v1/meta/coverage": {
+      "get": {
+        "summary": "getCoverage",
+        "description": "What the service holds, which sources, and the disclosure right for each source.",
+        "operationId": "getCoverage",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaCoverage"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {},
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "parameters": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Absence": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "no_such_entity | not_at_as_of | withheld_by_policy | not_covered | retrieval_degraded | unknown"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "default": ""
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "supports_negative_inference": {
+            "type": "boolean",
+            "title": "Supports Negative Inference",
+            "description": "⛔ Можно ли из этого молчания заключить, что искомого нет. Истинно РОВНО в одном случае — когда искали полноценно и не нашли"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "supports_negative_inference"
+        ],
+        "title": "Absence",
+        "description": "Почему здесь пусто. ⛔ Причина из закрытого словаря `epistemics.ABSENCE_REASONS`."
+      },
+      "AiContextResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "result_count": {
+            "type": "integer",
+            "title": "Result Count"
+          },
+          "entities": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Entities",
+            "description": "⚠ Пакеты сущностей собираются из базы и меняются вместе со схемой. Форма объявлена свободной НАМЕРЕННО: выдуманная здесь схема была бы хуже её отсутствия — машина поверила бы описанию"
+          },
+          "retrieval_only": {
+            "type": "boolean",
+            "title": "Retrieval Only",
+            "default": true
+          },
+          "retrieval_manifest": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Retrieval Manifest"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          },
+          "does_not_establish": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Does Not Establish",
+            "description": "⭐ Чего этот ответ НЕ утверждает. Выводится из состояния, а не из шаблона: каждый пункт добавлен по условию"
+          },
+          "absence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Absence"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Присутствует, если пусто"
+          },
+          "policy": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Policy",
+            "description": "⚠ ОПИСАНИЕ КОНТРАКТА, а не измерение. Это постоянные свойства эндпойнта; измеренное про данный ответ лежит в coverage"
+          },
+          "determinism": {
+            "$ref": "#/components/schemas/Determinism"
+          },
+          "audit_recorded": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audit Recorded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "result_count",
+          "entities",
+          "retrieval_manifest",
+          "coverage",
+          "does_not_establish",
+          "policy",
+          "determinism"
+        ],
+        "title": "AiContextResponse",
+        "description": "Выдача для машины."
+      },
+      "Coverage": {
+        "properties": {
+          "contract": {
+            "type": "string",
+            "title": "Contract",
+            "default": "aib-coverage-v1"
+          },
+          "sources_consulted": {
+            "items": {
+              "$ref": "#/components/schemas/SourceConsulted"
+            },
+            "type": "array",
+            "title": "Sources Consulted",
+            "default": []
+          },
+          "corpus_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Corpus As Of"
+          },
+          "corpus_as_of_known": {
+            "type": "boolean",
+            "title": "Corpus As Of Known",
+            "description": "⚠ Ложь означает «мы не знаем, насколько свежи наши сведения». Это не то же самое, что «сведения свежие»"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "as_of_pinned": {
+            "type": "boolean",
+            "title": "As Of Pinned"
+          },
+          "retrieval": {
+            "$ref": "#/components/schemas/RetrievalDiagnosis"
+          },
+          "filters_applied": {
+            "items": {
+              "$ref": "#/components/schemas/FilterApplied"
+            },
+            "type": "array",
+            "title": "Filters Applied",
+            "default": []
+          },
+          "legal_layer": {
+            "$ref": "#/components/schemas/LegalLayerState"
+          }
+        },
+        "type": "object",
+        "required": [
+          "corpus_as_of_known",
+          "as_of_pinned",
+          "retrieval",
+          "legal_layer"
+        ],
+        "title": "Coverage",
+        "description": "Что именно было просмотрено, чтобы получить этот ответ.\n\n⛔ БЕЗ ЭТОГО БЛОКА ПУСТОЙ ОТВЕТ НЕ ЗНАЧИТ НИЧЕГО: «посмотрели и не нашли» и «никуда\nне смотрели» приходили одной строкой, и вывод из них разный, а различить было нельзя."
+      },
+      "Determinism": {
+        "properties": {
+          "response_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Sha256",
+            "description": "Отпечаток каноничных байтов ответа. ⛔ `null` означает, что вычислить его не удалось — значение НЕ подставляется наугад: отпечаток, который может оказаться неверным, хуже отсутствующего"
+          },
+          "fingerprint_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fingerprint Status",
+            "description": "ok либо fingerprint_failed:<причина>"
+          },
+          "canonicalization": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonicalization",
+            "description": "⚠ Профиль сериализации, по которому считан отпечаток. Без него независимый пересчёт есть гадание"
+          },
+          "excluded_from_hash": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excluded From Hash",
+            "description": "⛔ Поля, НЕ покрытые отпечатком. Умолчание о них обесценило бы отпечаток целиком: пересчёт не сошёлся бы, и машина решила бы, что ответ подменён"
+          },
+          "reproducible": {
+            "type": "boolean",
+            "title": "Reproducible",
+            "description": "Обещана ли повторяемость. Истинно только при закреплённом as_of"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          }
+        },
+        "type": "object",
+        "required": [
+          "response_sha256",
+          "excluded_from_hash",
+          "reproducible",
+          "why"
+        ],
+        "title": "Determinism",
+        "description": "Можно ли сослаться на этот ответ и позже доказать, что он был таким.\n\n⛔ Прежде у выдачи для агента не было отпечатка вовсе, а `generated_at: now()` делал\nбайты различными при каждом вызове. Сослаться было нечем ни агенту, ни самой службе."
+      },
+      "FilterApplied": {
+        "properties": {
+          "filter": {
+            "type": "string",
+            "title": "Filter"
+          },
+          "removed_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Removed Count"
+          },
+          "counted": {
+            "type": "boolean",
+            "title": "Counted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filter",
+          "counted"
+        ],
+        "title": "FilterApplied",
+        "description": "Что было срезано из ответа. ⚠ `counted: false` означает «не считали», а не «ноль»."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthLive": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "version"
+        ],
+        "title": "HealthLive"
+      },
+      "HealthReady": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "database": {
+            "type": "string",
+            "title": "Database"
+          },
+          "config": {
+            "type": "string",
+            "title": "Config"
+          },
+          "schema": {
+            "type": "string",
+            "title": "Schema"
+          },
+          "legal_layer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Layer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "database",
+          "config",
+          "schema"
+        ],
+        "title": "HealthReady",
+        "description": "⛔ Готовность СЛУЖБЫ. Прежде проверялось соединение с базой, и на ПУСТОЙ схеме\nответ был «ready», а первый же запрос данных падал."
+      },
+      "LegalLayerState": {
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "why": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Why"
+          },
+          "channels_loaded": {
+            "type": "integer",
+            "title": "Channels Loaded",
+            "default": 0
+          },
+          "policies_loaded": {
+            "type": "integer",
+            "title": "Policies Loaded",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "available"
+        ],
+        "title": "LegalLayerState",
+        "description": "Состояние правового слоя в ЭТОЙ сборке.\n\n⚠ `available: false` НЕ ОЗНАЧАЕТ «ограничений нет». Оно означает, что права не\nпроверялись. Прежде правового слоя не было в образе вовсе, и приложение отдавало\nсведения, чьё основание в контейнере отсутствовало даже в виде файлов."
+      },
+      "MetaCoverage": {
+        "properties": {
+          "contract": {
+            "type": "string",
+            "title": "Contract"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "generated_at": {
+            "type": "string",
+            "title": "Generated At"
+          },
+          "database_reachable": {
+            "type": "boolean",
+            "title": "Database Reachable"
+          },
+          "counts": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Counts"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "legal_layer": {
+            "$ref": "#/components/schemas/LegalLayerState"
+          },
+          "absence_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Absence Reasons"
+          },
+          "error_codes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Error Codes"
+          },
+          "does_not_establish": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Does Not Establish"
+          }
+        },
+        "type": "object",
+        "required": [
+          "contract",
+          "service",
+          "version",
+          "generated_at",
+          "database_reachable",
+          "counts",
+          "sources",
+          "legal_layer",
+          "absence_reasons",
+          "error_codes",
+          "does_not_establish"
+        ],
+        "title": "MetaCoverage",
+        "description": "Заявление системы о самой себе: охват, права, словарь отказов.\n\n⭐ Открыт без ключа: границы собственного знания не секрет, и выяснять их перебором\nзапросов дорого и ненадёжно."
+      },
+      "MetaVocabulary": {
+        "properties": {
+          "contract": {
+            "type": "string",
+            "title": "Contract"
+          },
+          "generated_at": {
+            "type": "string",
+            "title": "Generated At"
+          },
+          "answer_fields": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Answer Fields"
+          },
+          "outcomes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Outcomes"
+          },
+          "registry_states_measured": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Registry States Measured"
+          },
+          "field_predicates": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Field Predicates"
+          },
+          "match_outcomes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Match Outcomes"
+          },
+          "does_not_establish": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Does Not Establish"
+          }
+        },
+        "type": "object",
+        "required": [
+          "contract",
+          "generated_at",
+          "answer_fields",
+          "outcomes",
+          "registry_states_measured",
+          "field_predicates",
+          "match_outcomes",
+          "does_not_establish"
+        ],
+        "title": "MetaVocabulary",
+        "description": "Словарь ответа проверки контрагента: поля, исходы, измеренные состояния реестра.\n\nОткрыт без ключа: машина не должна угадывать значения по форме ответа."
+      },
+      "Problem": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "URI вида https://ai-belarus.by/problems/<code>"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Машинный код из закрытого словаря"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Короткое название на русском"
+          },
+          "status": {
+            "type": "integer",
+            "title": "Status"
+          },
+          "retryable": {
+            "type": "boolean",
+            "title": "Retryable",
+            "description": "Имеет ли смысл повторить запрос. ⛔ Отличает «не готов» (да) от «ключи на сервере не настроены» (нет) — прежде оба были 503"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why",
+            "description": "Почему так вышло"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "code",
+          "title",
+          "status",
+          "retryable",
+          "why"
+        ],
+        "title": "Problem",
+        "description": "Отказ по RFC 9457 с нашим машинным кодом.\n\n⛔ Поле `code` — из закрытого словаря `errors.CATALOG`. Свободную строку разобрать\nнельзя, а по ней прежде приходилось различать «ключа нет» и «ключ неверен»."
+      },
+      "RetrievalDiagnosis": {
+        "properties": {
+          "backend": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Backend"
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode",
+            "description": "full_text_index | substring_only | degraded_fallback"
+          },
+          "degraded": {
+            "type": "boolean",
+            "title": "Degraded",
+            "description": "Указатель настроен и НЕ ОТВЕТИЛ — это поломка"
+          },
+          "degraded_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Degraded Reason"
+          },
+          "recall_limited": {
+            "type": "boolean",
+            "title": "Recall Limited",
+            "description": "Находит меньше, чем полноценный поиск"
+          },
+          "absence_is_informative": {
+            "type": "boolean",
+            "title": "Absence Is Informative",
+            "description": "⛔ Значит ли что-нибудь пустой результат. Ложь ⇒ вывод об отсутствии делать НЕЛЬЗЯ"
+          }
+        },
+        "type": "object",
+        "required": [
+          "degraded",
+          "recall_limited",
+          "absence_is_informative"
+        ],
+        "title": "RetrievalDiagnosis",
+        "description": "Каким способом искали и чем ограничена полнота.\n\n⛔ Прежде здесь был один булев флаг, и он отвечал на другой вопрос: «настроен ли\nуказатель» вместо «ослаблен ли поиск». При поиске подстрокой наружу шло\n«не деградировано», и пустой ответ читался как доказательство отсутствия."
+      },
+      "SearchResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "search_backend": {
+            "type": "string",
+            "title": "Search Backend"
+          },
+          "degraded_search": {
+            "type": "boolean",
+            "title": "Degraded Search"
+          },
+          "epistemic_policy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Epistemic Policy"
+          },
+          "data_boundary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Boundary"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          },
+          "does_not_establish": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Does Not Establish"
+          }
+        },
+        "type": "object",
+        "required": [
+          "results",
+          "search_backend",
+          "degraded_search",
+          "coverage",
+          "does_not_establish"
+        ],
+        "title": "SearchResponse"
+      },
+      "SourceConsulted": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier"
+          },
+          "disclosure_state": {
+            "type": "string",
+            "title": "Disclosure State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_id",
+          "disclosure_state"
+        ],
+        "title": "SourceConsulted"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
