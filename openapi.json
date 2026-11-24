@@ -5,7 +5,7 @@
     "version": "1.20.0",
     "description": "Belarusian business entities by UNP with provenance. Outcomes are yes / no / not_established — never read not_established as no. No scores or advice. When passing information on, name the holder and distributor from `attribution`.",
     "contact": {
-      "name": "ООО «Тендерные машины» — служба AI-BELARUS",
+      "name": "Табалевич С. П. (плательщик НПД, УНП AC0463536) — служба AI-BELARUS",
       "url": "https://ai-belarus.by/",
       "email": "6955400@gmail.com"
     }

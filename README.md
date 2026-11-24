@@ -65,5 +65,6 @@ curl -s -X POST https://ai-belarus.by/mcp \
 
 ## Operator & Legal Notice
 
-Operated by **ООО «Тендерные машины»** (Minsk, Belarus).
+Operated by **Sergei Tabalevich** (Self-Employed, Professional Income Tax Payer, UNP `AC0463536`, Minsk, Belarus).
 Re-distribution of facts obtained through the service must preserve official holder and distributor attribution (`attribution`, Belarus Law No. 455-Z Art. 20) and comply with Belarus Law No. 99-Z on Personal Data Protection. State registry datasets remain subject to the terms of their respective state holders.
+Public offer (NPD, green-zone services): [ai-belarus.by/offer](https://ai-belarus.by/offer).
